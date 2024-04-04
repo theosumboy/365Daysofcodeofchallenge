@@ -1,31 +1,42 @@
-class Solution {
-    public boolean isIsomorphic(String s, String t) {
-        // Create arrays to store the index of characters in both strings
-        int[] indexS = new int[200]; // Stores index of characters in string s
-        int[] indexT = new int[200]; // Stores index of characters in string t
+public class Solution {
+    public boolean exist(char[][] board, String word) {
+        int m = board.length;
+        int n = board[0].length;
+
+        boolean[][] visited = new boolean[m][n];
+        boolean result = false;
         
-        // Get the length of both strings
-        int len = s.length();
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board[i][j] == word.charAt(0)) {
+                    result = backtrack(board, word, visited, i, j, 0);
+                    if (result) return true;
+                }
+            }
+        }
         
-        // If the lengths of the two strings are different, they can't be isomorphic
-        if(len != t.length()) {
+        return false;
+    }
+    
+    private boolean backtrack(char[][] board, String word, boolean[][] visited, int i, int j, int index) {
+        if (index == word.length()) {
+            return true;
+        }
+        
+        if (i < 0 || i >= board.length || j < 0 || j >= board[0].length || visited[i][j] || board[i][j] != word.charAt(index)) {
             return false;
         }
         
-        // Iterate through each character of the strings
-        for(int i = 0; i < len; i++) {
-            // Check if the index of the current character in string s
-            // is different from the index of the corresponding character in string t
-            if(indexS[s.charAt(i)] != indexT[t.charAt(i)]) {
-                return false; // If different, strings are not isomorphic
-            }
-            
-            // Update the indices of characters in both strings
-            indexS[s.charAt(i)] = i + 1; // updating index of current character
-            indexT[t.charAt(i)] = i + 1; // updating index of current character
+        visited[i][j] = true;
+        
+        if (backtrack(board, word, visited, i + 1, j, index + 1) ||
+            backtrack(board, word, visited, i - 1, j, index + 1) ||
+            backtrack(board, word, visited, i, j + 1, index + 1) ||
+            backtrack(board, word, visited, i, j - 1, index + 1)) {
+            return true;
         }
         
-        // If the loop completes without returning false, strings are isomorphic
-        return true;
+        visited[i][j] = false;
+        return false;
     }
 }
